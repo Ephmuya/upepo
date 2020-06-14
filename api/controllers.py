@@ -48,7 +48,7 @@ def latest_readings():
             json_day = time.strftime("%Y-%m-%d", time_obj)
             # compare current day with json
             if str(json_day) == current_day:
-                current.append(i)
+                current.append(lower_key(i))
         return jsonify(current)
 
     except Exception as e:
