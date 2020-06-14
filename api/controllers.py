@@ -1,6 +1,7 @@
 import logging
 import requests
-import json
+import time
+import arrow
 from flask import jsonify ,Blueprint
 
 upepo = Blueprint("upepo", __name__)
@@ -33,6 +34,27 @@ def readings():
     except Exception as e:
         logger.error(e)
         return response(error=str(e))
+
+@upepo.route('/latest')
+def latest_readings():
+    try:
+        readings = "https://bahari2dev.azurewebsites.net/api/Test/Readings"
+        readings_data = requests.request("GET", url=readings)
+        output = readings_data.json()
+        current_day = arrow.now().format('YYYY-MM-DD')
+        current = []
+        for i in output:
+            time_obj = time.strptime(i['timeTaken'], "%Y-%m-%dT%H:%M:%S")
+            json_day = time.strftime("%Y-%m-%d", time_obj)
+            # compare current day with json
+            if str(json_day) == current_day:
+                current.append(i)
+        return jsonify(current)
+
+    except Exception as e:
+        logger.error(e)
+        return response(error=str(e))
+
 
 
 @upepo.route('/meters')
