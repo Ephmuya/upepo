@@ -5,6 +5,7 @@ upepo_apis = {
     "readings": "/upepo/v1/readings",
     "meters": "/upepo/v1/meters",
     "latest": "/upepo/v1/latest",
+    "current_readings": "/upepo/v1/current_readings",
 }
 
 
