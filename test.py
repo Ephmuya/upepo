@@ -23,6 +23,49 @@ for result in rv:
     json_data.append(dict(zip(row_headers,result)))
 
 data =json.dumps(json_data, cls= DecimalEncoder ,default=str , indent=4)
-cow = json.loads(data)
-print(cow)
+json = json.loads(data)
+converted =[]
+for i in json:
+    AccumulatedEffectiveRunningTime = i['AccumulatedEffectiveRunningTime']
+    AccumulatedFlowRate = i['AccumulatedFlowRate']
+    BateryVoltage = i['BateryVoltage']
+    DaillyFowRate= i['DaillyFowRate']
+    Humidity = i['Humidity']
+    Id = i['Id']
+    InstantaneousFlowRate = i['InstantaneousFlowRate']
+    Latitude = i['Latitude']
+    Longitude = i['Longitude']
+    LowestFlowRate = i['LowestFlowRate']
+    MeterID = i['MeterID']
+    PeakFlowRate = i['PeakFlowRate']
+    SignalStrength = i['SignalStrength']
+    Status = i['Status']
+    TimeTaken = i['TimeTaken']
+    WaterTemperature = i['WaterTemperature']
 
+    if Latitude != '':
+        try:
+            converted_data = {
+                "AccumulatedEffectiveRunningTime": float(AccumulatedEffectiveRunningTime),
+                "AccumulatedFlowRate": float(AccumulatedFlowRate),
+                "BateryVoltage": float(BateryVoltage),
+                "DaillyFowRate": float(DaillyFowRate),
+                "Id": Id,
+                "InstantaneousFlowRate": float(InstantaneousFlowRate),
+                "LowestFlowRate": float(LowestFlowRate),
+                "Humidity": float(Humidity),
+                "MeterID": MeterID,
+                "PeakFlowRate": float(PeakFlowRate),
+                "Status": float(Status),
+                "TimeTaken": TimeTaken,
+                "WaterTemperature": float(WaterTemperature),
+                "Latitude": float(Latitude),
+                "Longitude": float(Longitude),
+
+            }
+            converted.append(converted_data)
+        except ValueError:
+            pass
+
+
+print(converted)

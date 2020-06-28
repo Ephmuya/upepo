@@ -76,9 +76,9 @@ def current():
                 return float(o)
             return super(DecimalEncoder, self).default(o)
 
-    get_readings = "WITH LATEST_READINGS AS(Select m.Id AS MeterID, m.Longitude AS Longitude, m.Latitude AS Latitude, m.IMENumber AS IMEI, max(r.TimeTaken) " \
+    get_readings = "WITH LATEST_READINGS AS(Select m.Id AS MeterID, m.ZoneId AS ZoneID, m.Longitude AS Longitude, m.Latitude AS Latitude, max(r.TimeTaken) " \
                    "as TIME, max(r.Id) AS ID from Meters m join MeterReadings r on m.Id = r.MeterId " \
-                   "group by m.Id, m.IMENumber, m.Latitude, m.Longitude) SELECT MeterReadings.*, LATEST_READINGS.MeterID,LATEST_READINGS.Latitude, LATEST_READINGS.Longitude FROM MeterReadings " \
+                   "group by m.Id, m.ZoneID, m.Latitude, m.Longitude) SELECT MeterReadings.*, LATEST_READINGS.MeterID,LATEST_READINGS.ZoneId,LATEST_READINGS.Latitude, LATEST_READINGS.Longitude FROM MeterReadings " \
                    "INNER JOIN LATEST_READINGS ON LATEST_READINGS.ID = MeterReadings.Id order by MeterReadings.TimeTaken desc"
 
     cursor = db_access()
@@ -90,10 +90,54 @@ def current():
         json_data.append(dict(zip(row_headers, result)))
 
     data = json.dumps(json_data, cls=DecimalEncoder, default=str, indent=4)
-    cow = json.loads(data)
-    return jsonify(cow)
+    _json = json.loads(data)
+    converted = []
+    for i in _json:
+        AccumulatedEffectiveRunningTime = i['AccumulatedEffectiveRunningTime']
+        AccumulatedFlowRate = i['AccumulatedFlowRate']
+        BateryVoltage = i['BateryVoltage']
+        DaillyFowRate= i['DaillyFowRate']
+        Humidity = i['Humidity']
+        Id = i['Id']
+        InstantaneousFlowRate = i['InstantaneousFlowRate']
+        Latitude = i['Latitude']
+        Longitude = i['Longitude']
+        LowestFlowRate = i['LowestFlowRate']
+        MeterID = i['MeterID']
+        PeakFlowRate = i['PeakFlowRate']
+        SignalStrength = i['SignalStrength']
+        Status = i['Status']
+        ZoneId = i['ZoneId']
+        TimeTaken = i['TimeTaken']
+        WaterTemperature = i['WaterTemperature']
 
+        if Latitude != '':
+            try:
+                converted_data = {
+                    "AccumulatedEffectiveRunningTime": float(AccumulatedEffectiveRunningTime),
+                    "AccumulatedFlowRate": float(AccumulatedFlowRate),
+                    "BateryVoltage": float(BateryVoltage),
+                    "DaillyFowRate": float(DaillyFowRate),
+                    "Id": Id,
+                    "InstantaneousFlowRate": float(InstantaneousFlowRate),
+                    "LowestFlowRate": float(LowestFlowRate),
+                    "Humidity": float(Humidity),
+                    "MeterID": MeterID,
+                    "SignalStrength": float(SignalStrength),
+                    "PeakFlowRate": float(PeakFlowRate),
+                    "Status": float(Status),
+                    "ZoneID": ZoneId,
+                    "TimeTaken": TimeTaken,
+                    "WaterTemperature": float(WaterTemperature),
+                    "Latitude": float(Latitude),
+                    "Longitude": float(Longitude),
 
+                }
+                converted.append(converted_data)
+            except ValueError:
+                pass
+
+    return jsonify(converted)
 
 def response(status=400, result=None, warnings=None, error=None):
     return jsonify(status=status, result=result, warnings=warnings, error=error), status
