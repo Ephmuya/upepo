@@ -11,7 +11,7 @@ class DecimalEncoder(json.JSONEncoder):
 
 get_readings  = "WITH LATEST_READINGS AS(Select m.Id AS MeterID, m.Longitude AS Longitude, m.Latitude AS Latitude, m.IMENumber AS IMEI, max(r.TimeTaken) " \
                 "as TIME, max(r.Id) AS ID from Meters m join MeterReadings r on m.Id = r.MeterId " \
-                "group by m.Id, m.IMENumber) SELECT MeterReadings.*, LATEST_READINGS.MeterID FROM MeterReadings " \
+                "group by m.Id, m.IMENumber, m.Latitude, m.Longitude) SELECT MeterReadings.*, LATEST_READINGS.MeterID,LATEST_READINGS.Latitude, LATEST_READINGS.Longitude FROM MeterReadings " \
                 "INNER JOIN LATEST_READINGS ON LATEST_READINGS.ID = MeterReadings.Id order by MeterReadings.TimeTaken desc"
 
 cursor = api.db_access()
