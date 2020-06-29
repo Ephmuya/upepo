@@ -116,7 +116,7 @@ def current():
                 converted_data = {
                     "accumulatedeffectiverunningtime": float(AccumulatedEffectiveRunningTime),
                     "accumulatedflowtate": float(AccumulatedFlowRate),
-                    "batteryvoltage": float(BateryVoltage),
+                    "batteryvoltage": float(BateryVoltage)/1000,
                     "dailyflowrate": float(DaillyFowRate),
                     "id": Id,
                     "instantaneousflowfate": float(InstantaneousFlowRate),
